@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import { DatabaseSync } from 'node:sqlite';
 
 const app = express();
 const PORT = 3000;
@@ -7,38 +8,42 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
-type Post = {
-  id: number;
-  name: string;
-  content: string;
-  createdAt: string;
-};
+// 1. SQLite データベースの初期化（dev.db ファイルが自動生成されます）
+const db = new DatabaseSync('dev.db');
 
-// サーバー上のメモリで保持する仮データ
-let posts: Post[] = [
-  {
-    id: 1,
-    name: '管理者',
-    content: 'TypeScriptバックエンドからの初期データです！',
-    createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-  },
-];
+// 2. テーブルの作成（存在しない場合のみ）
+db.exec(`
+  CREATE TABLE IF NOT EXISTS posts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    content TEXT NOT NULL,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
 
-// 1. 投稿一覧取得 API (GET)
+// 投稿一覧の取得 API
 app.get('/api/posts', (req, res) => {
+  const stmt = db.prepare('SELECT * FROM posts ORDER BY id DESC');
+  const posts = stmt.all();
   res.json(posts);
 });
 
-// 2. 投稿追加 API (POST)
+// 新規投稿の保存 API
 app.post('/api/posts', (req, res) => {
   const { name, content } = req.body;
-  const newPost: Post = {
-    id: Date.now(),
-    name: name || '名無しさん',
+  const postName = name || '名無しさん';
+
+  const stmt = db.prepare('INSERT INTO posts (name, content) VALUES (?, ?)');
+  const result = stmt.run(postName, content);
+
+  const newPost = {
+    
+    id: result.lastInsertRowid,
+    name: postName,
     content,
-    createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    createdAt: new Date().toISOString(),
   };
-  posts.unshift(newPost);
+
   res.status(201).json(newPost);
 });
 

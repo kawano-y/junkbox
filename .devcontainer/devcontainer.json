@@ -1,0 +1,7 @@
+{
+  "name": "Node.js & Express App",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": { "label": "Express Server", "visibility": "public" }
+  }
+}
