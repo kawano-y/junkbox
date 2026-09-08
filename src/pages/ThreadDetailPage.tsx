@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import '../App.css';
 
 // 1. 投稿データの型定義
@@ -15,10 +16,10 @@ type Thread = {
   createdAt?: string;
 };
 // 対象のスレッドID（URLパラメータやprops等から取得するイメージです）
-const THREAD_ID = 1;
-const API_BASE_URL = `https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/threads/${THREAD_ID}`;
 
 export function ThreadDetailPage() {// スレッド情報のState
+  const { threadId } = useParams<{ threadId: string }>();
+
   const [thread, setThread] = useState<Thread | null>(null);
   // 2. State（状態管理）の設定
   const [posts, setPosts] = useState<Post[]>([]);
@@ -32,6 +33,11 @@ export function ThreadDetailPage() {// スレッド情報のState
 
   // 1. 初回表示時にバックエンド API (GET) からデータを取得
   useEffect(() => {
+    // threadId を使って API 通信を行う
+    if (!threadId) return;
+
+    const API_BASE_URL = `https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/threads/${threadId}`;
+
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -61,23 +67,29 @@ export function ThreadDetailPage() {// スレッド情報のState
 
     fetchData();
   }, []);
-  
+
   // 2. 投稿送信処理 (POST)
   const handleAddPost = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim()) return;
+    if (!content.trim() || !threadId) return;
+
+    // 名前が空の場合は「名無しさん」を設定
+    const postName = name.trim() || '名無しさん';
 
     try {
-      const res = await fetch('https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/threads/1/posts', {
+      // URLに threadId を動的に埋め込み
+      const res = await fetch(`https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/threads/${threadId}/posts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, content }),
+        body: JSON.stringify({ name: postName, content }),
       });
 
       if (res.ok) {
         const newPost = await res.json();
-        setPosts([newPost, ...posts]); // 画面の表示も更新
-        setContent('');
+        setPosts((prevPosts) => [newPost, ...prevPosts]); // 安全な関数型更新
+        setContent(''); // メッセージ入力欄をリセット
+      } else {
+        console.error('投稿に失敗しました');
       }
     } catch (err) {
       console.error('投稿エラー:', err);
@@ -94,6 +106,9 @@ export function ThreadDetailPage() {// スレッド情報のState
 
   return (
     <div className="container">
+      <Link to="/" style={{ textDecoration: 'none', color: '#0066cc' }}>
+        ← 一覧に戻る
+      </Link>
       <h1>💬 {thread ? thread.title : 'スレッド詳細'}</h1>
 
       {/* 投稿フォーム */}
