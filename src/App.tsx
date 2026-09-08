@@ -8,20 +8,58 @@ type Post = {
   content: string;
   createdAt: string;
 }
+// 1. スレッド情報の型定義
+type Thread = {
+  id: number;
+  title: string;
+  createdAt?: string;
+};
+// 対象のスレッドID（URLパラメータやprops等から取得するイメージです）
+const THREAD_ID = 1;
+const API_BASE_URL = `https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/threads/${THREAD_ID}`;
 
-export default function App() {
+export default function App() {// スレッド情報のState
+  const [thread, setThread] = useState<Thread | null>(null);
   // 2. State（状態管理）の設定
   const [posts, setPosts] = useState<Post[]>([]);
   // フォーム入力用のState
   const [name, setName] = useState('');
   const [content, setContent] = useState('');
 
+  // ローディングとエラー状態
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   // 1. 初回表示時にバックエンド API (GET) からデータを取得
   useEffect(() => {
-    fetch('https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/posts')
-      .then((res) => res.json())
-      .then((data) => setPosts(data))
-      .catch((err) => console.error('データ取得エラー:', err));
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        // スレッド情報と投稿一覧を並行取得 (Promise.all)
+        const [threadRes, postsRes] = await Promise.all([
+          fetch(API_BASE_URL),
+          fetch(`${API_BASE_URL}/posts`)
+        ]);
+
+        if (!threadRes.ok || !postsRes.ok) {
+          throw new Error('データの取得に失敗しました');
+        }
+
+        const threadData: Thread = await threadRes.json();
+        const postsData: Post[] = await postsRes.json();
+
+        setThread(threadData);
+        setPosts(postsData);
+      } catch (err) {
+        console.error(err);
+        setError('スレッドデータの読み込みに失敗しました');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
   
   // 2. 投稿送信処理 (POST)
@@ -30,7 +68,7 @@ export default function App() {
     if (!content.trim()) return;
 
     try {
-      const res = await fetch('https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/posts', {
+      const res = await fetch('https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/threads/1/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, content }),
@@ -51,9 +89,12 @@ export default function App() {
     setPosts(posts.filter((post) => post.id !== id));
   };
 
+  if (loading) return <div className="container"><p>読み込み中...</p></div>;
+  if (error) return <div className="container"><p style={{ color: 'red' }}>{error}</p></div>;
+
   return (
     <div className="container">
-      <h1>💬 簡易掲示板</h1>
+      <h1>💬 {thread ? thread.title : 'スレッド詳細'}</h1>
 
       {/* 投稿フォーム */}
       <form
