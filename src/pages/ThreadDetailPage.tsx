@@ -109,7 +109,18 @@ export function ThreadDetailPage() {// スレッド情報のState
       <Link to="/" style={{ textDecoration: 'none', color: '#0066cc' }}>
         ← 一覧に戻る
       </Link>
-      <h1>💬 {thread ? thread.title : 'スレッド詳細'}</h1>
+      <h1
+      style={{ 
+        fontSize: '50px',
+        lineHeight: '1.4',        // ① 行高を拡大して文字の上下切れを防止
+        padding: '4px 0',          // ② 上下に少し余白を作って描写領域を広げる
+        display: 'block',          // ③ ブロック要素であることを明示
+        whiteSpace: 'nowrap',       // 改行させない
+        overflow: 'hidden',          // はみ出た文字を隠す
+        textOverflow: 'ellipsis',   // はみ出た部分を '...' にする
+        maxWidth: '100%',            // 親要素からはみ出さないように制限
+      }}
+      >💬 {thread ? thread.title : 'スレッド詳細'}</h1>
 
       {/* 投稿フォーム */}
       <form
