@@ -14,6 +14,11 @@ export function ThreadListPage() {
 
   return (
     <div className="container">
+      <div style={{ marginBottom: '16px' }}>
+      <Link to="/" style={{ textDecoration: 'none', color: '#666', fontSize: '14px' }}>
+        ← 機能一覧に戻る
+      </Link>
+      </div>
       {/* ヘッダー部分に「新規スレッド作成」ボタンを配置 */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}></div>
       <h1>💬 スレッド一覧</h1>
