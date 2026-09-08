@@ -2,6 +2,10 @@ import { google } from 'googleapis';
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
+if (!YOUTUBE_API_KEY) {
+  console.warn('警告: YOUTUBE_API_KEY が設定されていません。');
+}
+
 const youtube = google.youtube({
   version: 'v3',
   auth: YOUTUBE_API_KEY,
