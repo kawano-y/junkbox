@@ -27,3 +27,4 @@ dist-ssr
 snippet/*
 
 server/data/*
+server/src/scripts/*
