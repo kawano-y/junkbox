@@ -59,7 +59,11 @@ export const fetchAllVideoComments = async (videoId: string) => {
     const filePath = path.join(outputDir, `comments_${videoId}_${Date.now()}.json`);
 
     // JSON化してファイルに書き込み（インデント2で見やすく整形）
-    fs.writeFileSync(filePath, JSON.stringify(allComments, null, 2), 'utf-8');
+    // fs.writeFileSync(filePath, JSON.stringify(allComments, null, 2), 'utf-8');
+    // jsonl形式で保存
+    const ndjsonData = allComments.map(comment => JSON.stringify(comment)).join('\n');
+    // ファイルへ書き込み
+    fs.writeFileSync(filePath, ndjsonData, 'utf-8');
     console.log(`JSONファイルを保存しました: ${filePath}`);
 
   } catch (err) {
