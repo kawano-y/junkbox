@@ -2,8 +2,9 @@ node_modules/
 dist/
 .env
 
-# SQLite データベースファイルを除外
+# SQLite 関連ファイルをまとめて除外
 *.db
-*.db-journal
+*.db-shm
+*.db-wal
 *.sqlite
 *.sqlite3
