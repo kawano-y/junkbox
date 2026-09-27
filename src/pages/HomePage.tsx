@@ -1,8 +1,22 @@
 import { Link } from 'react-router-dom';
+import { LogoutButton } from '../components/LogoutButton';
+import { useAuth } from '../contexts/AuthContext';
 
 export function HomePage() {
+  const { user } = useAuth();
   return (
+    
     <div className="container" style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
+      <div>
+        {user ? (
+          <div>
+            <p>こんにちは、{user.name}さん</p>
+            <LogoutButton />
+          </div>
+        ) : (
+          <p>ログインしていません</p>
+        )}
+      </div>
       <h1 style={{ marginBottom: '8px' }}>🚀 アプリ機能一覧</h1>
       <p style={{ color: '#666', marginBottom: '24px' }}>利用したい機能を選択してください。</p>
 

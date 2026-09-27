@@ -32,11 +32,14 @@ export const initDb = () => {
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
-      username TEXT NOT NULL UNIQUE,
+      username TEXT UNIQUE,
       email TEXT NOT NULL UNIQUE,
-      password_hash TEXT NOT NULL,
+      password_hash TEXT,
+      google_id TEXT UNIQUE,
+      name TEXT,
+      picture TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    );
+    )
   `);
 
   // チャットルームテーブル
@@ -81,7 +84,7 @@ export const initDb = () => {
 
 
   const userCheck = db.prepare('SELECT * FROM users WHERE id = ?').get('test-user-001');
-const roomCheck = db.prepare('SELECT * FROM rooms WHERE id = ?').get('room1');
+  const roomCheck = db.prepare('SELECT * FROM rooms WHERE id = ?').get('room1');
 
   console.log('--- DB Check ---');
   console.log('User in DB:', userCheck);
