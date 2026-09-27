@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom';
 import { LogoutButton } from '../components/LogoutButton';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export function HomePage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
   return (
     
     <div className="container" style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
@@ -14,7 +17,7 @@ export function HomePage() {
             <LogoutButton />
           </div>
         ) : (
-          <p>ログインしていません</p>
+          <button onClick={() => navigate('/login')}>ログイン</button>
         )}
       </div>
       <h1 style={{ marginBottom: '8px' }}>🚀 アプリ機能一覧</h1>
