@@ -3,6 +3,7 @@ import { HomePage } from './pages/HomePage';
 import { ThreadListPage } from './pages/ThreadListPage';
 import { ThreadDetailPage } from './pages/ThreadDetailPage';
 import { CreateThreadPage } from './pages/CreateThreadPage'; // 追加
+import { ChatPage } from './pages/ChatPage'; // 追加
 
 export default function App() {
   return (
@@ -16,6 +17,8 @@ export default function App() {
         <Route path="/threads" element={<ThreadListPage />} />
         <Route path="/threads/new" element={<CreateThreadPage />} />
         <Route path="/threads/:threadId" element={<ThreadDetailPage />} />
+        {/* 3. リアルタイムチャット画面を追加する場合 */}
+        <Route path="/chat" element={<ChatPage />} />
       </Routes>
     </BrowserRouter>
   );

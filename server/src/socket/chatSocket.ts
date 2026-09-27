@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import { MessageModel } from '../models/messageModel';
 import { randomUUID } from 'crypto';
+import { db } from '../config/database';
 
 export function setupChatSocket(io: Server) {
   io.on('connection', (socket: Socket) => {
@@ -16,6 +17,25 @@ export function setupChatSocket(io: Server) {
       console.log(`[Socket.io] メッセージを受信＆配信中... from: ${socket.id}`);
       const { roomId, userId, content } = data;
       if (!roomId || !userId || !content.trim()) return;
+
+      // 1. users テーブルにユーザーが存在するか確認
+      const existingUser = db.prepare('SELECT id FROM users WHERE id = ?').get(userId);
+
+      // 2. 存在しなければ自動登録（UPSERT / 既存チェック後 INSERT）
+      if (!existingUser) {
+        // NOT NULL 制約を満たすように username, email, password_hash に値を設定して INSERT
+        db.prepare(`
+          INSERT INTO users (id, username, email, password_hash, created_at)
+          VALUES (?, ?, ?, ?, DATETIME('now'))
+        `).run(
+          userId,                         // id
+          userId,                         // username
+          `${userId}@guest.local`,        // email (UNIQUE 制約を回避するため動的に作成)
+          'guest_dummy_hash'              // password_hash (仮パスワードハッシュ)
+        );
+
+        console.log(`👤 新規ユーザーを自動登録しました: ${userId}`);
+      }
 
       const messageId = randomUUID();
       const createdAt = new Date().toISOString();
