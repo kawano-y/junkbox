@@ -1,12 +1,13 @@
-// import { readFileSync } from 'node:fs'
-// import { fileURLToPath } from 'node:url'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
+export const TAX_RATE = 0.1
+
+
 export type InvoiceItem = {
   name: string
-  quantity: number
-  unitPrice: number
+  quantity: number | ''
+  unitPrice: number | ''
 }
 
 export type InvoiceData = {
@@ -26,21 +27,35 @@ const esc = (s: string) =>
   )
 
 const yen = (n: number) => `¥${Math.round(n).toLocaleString('ja-JP')}`
+const asNumber = (value: number | '') => (typeof value === 'number' ? value : 0)
+
+const numOrBlank = (n: number | '') =>
+  n === '' ? '' : n.toLocaleString('ja-JP')
+const yenOrBlank = (n: number | '') => (n === '' ? '' : yen(n))
 
 export function renderInvoiceHtml(data: InvoiceData): string {
-  const taxRate = data.taxRate ?? 0.1
-  const subtotal = data.items.reduce((sum, i) => sum + i.quantity * i.unitPrice, 0)
+  const taxRate = data.taxRate ?? TAX_RATE
+  const subtotal = data.items.reduce(
+    (sum, i) => sum + asNumber(i.quantity) * asNumber(i.unitPrice),
+    0,
+  )
   const tax = Math.floor(subtotal * taxRate)
+  const blank = (s: string) => (s === '' ? '&nbsp;' : s)
 
   const rows = data.items
     .map(
-      (i) => `
+      (i) => {
+        // 数量か単価のどちらかが空なら、金額も空欄にする
+        const lineTotal = i.quantity === '' || i.unitPrice === '' ? '' : i.quantity * i.unitPrice
+
+        return `
       <tr>
-        <td>${esc(i.name)}</td>
-        <td class="num">${i.quantity.toLocaleString('ja-JP')}</td>
-        <td class="num">${yen(i.unitPrice)}</td>
-        <td class="num">${yen(i.quantity * i.unitPrice)}</td>
-      </tr>`,
+        <td>${blank(esc(i.name))}</td>
+        <td class="num">${numOrBlank(i.quantity)}</td>
+        <td class="num">${yenOrBlank(i.unitPrice)}</td>
+        <td class="num">${yenOrBlank(lineTotal)}</td>
+      </tr>`
+      },
     )
     .join('')
 
