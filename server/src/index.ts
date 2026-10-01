@@ -11,6 +11,7 @@ import { roomRouter } from './routes/roomRoutes';
 import { setupChatSocket } from './socket/chatSocket';
 import { authRooters } from './routes/authRoutes';
 import { invoiceRouter } from './routes/invoiceRoutes'; // ← 追加
+import quoteRoutes from './routes/quoteRoutes';
 
 const app = express();
 const PORT = 3000;
@@ -60,6 +61,8 @@ app.use(
   })
 );
 app.use('/api/auth', authRooters);
+app.use('/api/quotes', quoteRoutes);
+
 
 // Socketハンドラー適用
 setupChatSocket(io);
