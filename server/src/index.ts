@@ -10,6 +10,7 @@ import { youtubeRouter } from './routes/youtubeRoute';
 import { roomRouter } from './routes/roomRoutes';
 import { setupChatSocket } from './socket/chatSocket';
 import { authRooters } from './routes/authRoutes';
+import { invoiceRouter } from './routes/invoiceRoutes'; // ← 追加
 
 const app = express();
 const PORT = 3000;
@@ -43,6 +44,7 @@ initDb();
 app.use('/api/threads', threadRouter);
 app.use('/api/youtube', youtubeRouter);
 app.use('/api/rooms', roomRouter);
+app.use('/api/invoice', invoiceRouter);
 
 
 app.use(
