@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./InvoicePage.css"; // ← 追加
 import { downloadInvoice } from "../lib/invoice";
 import {
   MAX_INVOICE_ITEMS,
@@ -62,7 +63,7 @@ export const InvoicePage = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="invoice-page">
       <h1>請求書作成</h1>
       <div className="invoice-form">
       <label className="field">
@@ -100,31 +101,35 @@ export const InvoicePage = () => {
       </div>
 
       <h2>明細（{items.length} / {MAX_INVOICE_ITEMS}）</h2>
-      {items.map((item, i) => (
-        <div key={i}>
-          <input
+        {items.map((item, i) => (
+        <div key={i} className="item-row">
+            <input
             placeholder="品名"
+            aria-label="品名"
             value={item.name}
             onChange={(e) => updateItem(i, "name", e.target.value)}
-          />
-          <input
+            />
+            <input
             type="number"
             min={1}
+            placeholder="数量"
+            aria-label="数量"
             value={item.quantity}
             onChange={(e) => updateItem(i, "quantity", Number(e.target.value))}
-          />
-          <input
+            />
+            <input
             type="number"
             min={0}
+            placeholder="単価"
+            aria-label="単価"
             value={item.unitPrice}
             onChange={(e) => updateItem(i, "unitPrice", Number(e.target.value))}
-          />
-          <button type="button" onClick={() => removeItem(i)}>
+            />
+            <button type="button" onClick={() => removeItem(i)}>
             削除
-          </button>
+            </button>
         </div>
-      ))}
-
+        ))}
       <button
         type="button"
         onClick={addItem}
@@ -133,12 +138,15 @@ export const InvoicePage = () => {
         行を追加
       </button>
 
-      <p>小計: {total.toLocaleString()} 円</p>
+      <p className="total">小計: {total.toLocaleString()} 円</p>
+
       {error && <p role="alert">{error}</p>}
 
-      <button type="submit" disabled={loading}>
-        {loading ? "生成中..." : "PDFをダウンロード"}
-      </button>
+      <div className="actions">
+        <button type="submit" disabled={loading}>
+            {loading ? "生成中..." : "PDFをダウンロード"}
+        </button>
+      </div>
     </form>
   );
 }

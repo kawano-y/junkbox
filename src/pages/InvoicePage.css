@@ -1,0 +1,89 @@
+.invoice-page {
+  max-width: 640px;
+  margin: 0 auto;      /* 箱ごと中央に置く */
+  padding: 24px 16px;
+  text-align: left;    /* 中の文字は左揃えに戻す */
+}
+
+.invoice-page h1 {
+  text-align: center;  /* タイトルは中央のままにする */
+}
+
+.invoice-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field > span {
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+}
+
+.field input,
+.field textarea {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font: inherit;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.field-wide {
+  grid-column: 1 / -1;
+}
+
+/* 明細行 */
+.item-row {
+  display: grid;
+  grid-template-columns: 1fr 90px 120px auto;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.item-row input {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font: inherit;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+@media (max-width: 520px) {
+  .invoice-form {
+    grid-template-columns: 1fr;
+  }
+  .item-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .item-row input:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.invoice-page .total {
+  text-align: right;
+  font-weight: 600;
+}
+
+.invoice-page .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
