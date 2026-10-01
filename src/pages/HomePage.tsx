@@ -70,6 +70,27 @@ export function HomePage() {
           </Link>
         </div>
 
+        <div 
+          style={{ 
+            border: '1px solid #e0e0e0', 
+            borderRadius: '8px', 
+            padding: '20px', 
+            background: '#fff',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+          }}
+        >
+          <h2 style={{ margin: '0 0 8px 0', fontSize: '20px' }}>📄 請求書作成</h2>
+          <p style={{ color: '#555', fontSize: '14px', marginBottom: '16px' }}>
+            請求書の作成・PDF出力ができます。
+          </p>
+          <Link 
+            to="/invoice" 
+            className="btn-primary" 
+            style={{ textDecoration: 'none', display: 'inline-block', padding: '8px 16px' }}
+          >
+            請求書を作成 →
+          </Link>
+        </div>
       </div>
     </div>
   );
