@@ -1,4 +1,5 @@
 import { DatabaseSync } from 'node:sqlite';
+import { calculateQuote } from '../domain/quote';
 
 // 1. DBインスタンスの生成
 export const db = new DatabaseSync('dev.db');
@@ -66,6 +67,27 @@ export const initDb = () => {
   `);
 
 
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS quotes (
+      id            TEXT PRIMARY KEY,
+      customer_name TEXT NOT NULL,
+      status        TEXT NOT NULL
+                    CHECK (status IN ('draft','sent','accepted','rejected','ordered')),
+      valid_until   TEXT NOT NULL,  -- ISO 8601（例: 2026-10-31T23:59:59.999+09:00）
+      totals_json   TEXT NOT NULL   -- QuoteTotals をJSON文字列で保存
+    );
+
+    CREATE TABLE IF NOT EXISTS orders (
+      id            TEXT PRIMARY KEY,
+      quote_id      TEXT NOT NULL UNIQUE REFERENCES quotes(id),
+      customer_name TEXT NOT NULL,
+      totals_json   TEXT NOT NULL,
+      ordered_at    TEXT NOT NULL
+    );
+  `);
+
+
   // 2. テスト用デフォルトデータの準備（存在しない場合のみ挿入）
   const insertUser = db.prepare(`
     INSERT OR IGNORE INTO users (id, username, email, password_hash, created_at)
@@ -83,12 +105,27 @@ export const initDb = () => {
   insertRoom.run('room1', 'テストルーム');
 
 
-  const userCheck = db.prepare('SELECT * FROM users WHERE id = ?').get('test-user-001');
-  const roomCheck = db.prepare('SELECT * FROM rooms WHERE id = ?').get('room1');
+  const totals = calculateQuote([
+    { name: '開発', quantity: 1, unitPrice: 100000, taxRate: 10 },
+  ]);
 
-  console.log('--- DB Check ---');
-  console.log('User in DB:', userCheck);
-  console.log('Room in DB:', roomCheck);
+  db.prepare(
+    `INSERT OR IGNORE INTO quotes (id, customer_name, status, valid_until, totals_json)
+    VALUES (?, ?, ?, ?, ?)`,
+  ).run('q-1', '株式会社テスト', 'accepted', '2026-10-31T23:59:59.999+09:00', JSON.stringify(totals));
+
   console.log('----------------');
   console.log('Database initialized successfully.');
 };
+
+export function runInTransaction<T>(fn: () => T): T {
+  db.exec('BEGIN IMMEDIATE'); // 書き込みロックを先に取る
+  try {
+    const result = fn();
+    db.exec('COMMIT');
+    return result;
+  } catch (e) {
+    db.exec('ROLLBACK');
+    throw e;
+  }
+}

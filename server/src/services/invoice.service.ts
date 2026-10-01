@@ -1,5 +1,6 @@
 import { renderPdf } from '../pdf/render'
 import { renderInvoiceHtml } from '../pdf/templates/invoice'
+import { db } from '../config/database';
 
 export const MAX_ROWS = 14
 
