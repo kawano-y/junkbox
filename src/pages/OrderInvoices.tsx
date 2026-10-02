@@ -20,6 +20,12 @@ type ApiError = {
   code?: "INVALID_AMOUNT" | "EXCEEDS_ORDER_TOTAL";
 };
 
+const isInvoiceList = (v: unknown): v is InvoiceList =>
+  typeof v === "object" &&
+  v !== null &&
+  Array.isArray((v as InvoiceList).invoices) &&
+  typeof (v as InvoiceList).remaining === "number";
+
 const yen = (n: number) => `¥${Number(n).toLocaleString("ja-JP")}`;
 const STATUS_LABELS: Record<string, string> = { issued: "発行済み" };
 
@@ -39,15 +45,22 @@ export function OrderInvoices({ initialOrderId }: Props) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/orders/${encodeURIComponent(id)}/invoices`);
-      const body: unknown = await res.json().catch(() => ({}));
+      const res = await fetch(`https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/orders/${encodeURIComponent(id)}/invoices`);
+      const body: unknown = await res.json().catch(() => null);
       if (!res.ok) {
         setData(null);
         setOrderId(null);
-        setError(res.status === 404 ? "受注が見つかりません" : (body as ApiError).error ?? `エラー (${res.status})`);
+        setError(res.status === 404 ? "受注が見つかりません" : (body as ApiError | null)?.error ?? `エラー (${res.status})`);
         return;
       }
-      setData(body as InvoiceList);
+      if (!isInvoiceList(body)) {
+        // 200 でもJSONでない／形が違うときは、中継設定やAPIの形を疑う
+        setData(null);
+        setOrderId(null);
+        setError("請求APIの応答が想定と違います。Viteの中継設定（/orders）とAPIのレスポンスを確認してください");
+        return;
+      }
+      setData(body);
       setOrderId(id);
     } catch {
       setError("サーバーに接続できません");
@@ -67,7 +80,7 @@ export function OrderInvoices({ initialOrderId }: Props) {
     if (!orderId || !data) return;
     setError(null);
     try {
-      const res = await fetch(`/orders/${encodeURIComponent(orderId)}/invoices`, {
+      const res = await fetch(`https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/orders/${encodeURIComponent(orderId)}/invoices`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: Number(amount) }),

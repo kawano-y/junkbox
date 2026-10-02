@@ -55,7 +55,7 @@ export function QuoteCalculator() {
     const controller = new AbortController();
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch("/api/quotes/calculate", {
+        const res = await fetch("https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/quotes/calculate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ lines, lineRounding, taxRounding }),

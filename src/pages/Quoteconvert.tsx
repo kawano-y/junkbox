@@ -36,7 +36,7 @@ export function QuoteConvert({ onOpenInvoices }: Props) {
     setError(null);
     setOrder(null);
     try {
-      const res = await fetch(`/quotes/${encodeURIComponent(id)}/convert`, { method: "POST" });
+      const res = await fetch(`https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/quotes/${encodeURIComponent(id)}/convert`, { method: "POST" });
       const body: unknown = await res.json().catch(() => ({}));
       if (res.status === 201) {
         setOrder(body as Order);
