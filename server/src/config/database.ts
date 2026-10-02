@@ -88,6 +88,18 @@ export const initDb = () => {
   `);
 
 
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS invoices (
+      id         TEXT PRIMARY KEY,
+      order_id   TEXT NOT NULL REFERENCES orders(id),
+      amount     INTEGER NOT NULL CHECK (amount > 0),  -- 税込・円
+      status     TEXT NOT NULL DEFAULT 'issued',       -- 'issued' | 'cancelled'
+      issued_at  TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_invoices_order_id ON invoices(order_id);
+  `);
+
+
   // 2. テスト用デフォルトデータの準備（存在しない場合のみ挿入）
   const insertUser = db.prepare(`
     INSERT OR IGNORE INTO users (id, username, email, password_hash, created_at)
