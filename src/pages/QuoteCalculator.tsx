@@ -1,5 +1,7 @@
 import { useEffect, useState, type CSSProperties } from "react";
 
+const API_BASE = "https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev";
+
 type Rounding = "floor" | "ceil" | "round";
 type TaxRate = 8 | 10;
 
@@ -49,7 +51,11 @@ export function QuoteCalculator() {
   const [taxRounding, setTaxRounding] = useState<Rounding>("floor");
   const [result, setResult] = useState<CalculateResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-
+  // 追加する state
+  const [saving, setSaving] = useState(false);
+  const [registerError, setRegisterError] = useState<string | null>(null);
+  const [registeredId, setRegisteredId] = useState<string | number | null>(null);
+  const [customerName, setCustomerName] = useState("");
   // 入力が変わるたびに、サーバーで計算し直す（金額計算はサーバー側だけで行う）
   useEffect(() => {
     const controller = new AbortController();
@@ -84,6 +90,30 @@ export function QuoteCalculator() {
     setLines((ls) => ls.map((l, idx) => (idx === i ? { ...l, [key]: value } : l)));
 
   const num = (v: string) => (v === "" ? 0 : Number(v));
+
+  const register = async () => {
+    setSaving(true);
+    setRegisterError(null);
+    setRegisteredId(null);
+    try {
+      const res = await fetch(`${API_BASE}/api/quotes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        // 金額は送らない。サーバー側で再計算して保存する
+        body: JSON.stringify({ customerName, lines, lineRounding, taxRounding }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setRegisterError(errorMessage(data as ErrorBody, res.status));
+        return;
+      }
+      setRegisteredId((data as { id: string | number }).id);
+    } catch {
+      setRegisterError("サーバーに接続できません");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <main style={styles.page}>
@@ -151,6 +181,15 @@ export function QuoteCalculator() {
           </dl>
         </section>
       )}
+      <label>
+        顧客名{" "}
+        <input value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
+      </label>
+      <button onClick={register} disabled={saving || lines.length === 0 || !!error}>
+        {saving ? "登録中..." : "見積を登録"}
+      </button>
+      {registerError && <p role="alert" style={styles.error}>{registerError}</p>}
+      {registeredId !== null && <p>見積を登録しました（ID: {registeredId}）</p>}
     </main>
   );
 }
