@@ -1,4 +1,5 @@
 import { useState, type CSSProperties, type FormEvent } from "react";
+import { API_URL } from "../lib/config";
 
 // 受注JSON。lines と totals の中身は仮の型なので、実際のレスポンスに合わせて直してください
 type OrderLine = { name: string; quantity: number; unitPrice: number; amount?: number };
@@ -36,7 +37,7 @@ export function QuoteConvertPage({ onOpenInvoices }: Props) {
     setError(null);
     setOrder(null);
     try {
-      const res = await fetch(`https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/quotes/${encodeURIComponent(id)}/convert`, { method: "POST" });
+      const res = await fetch(`${API_URL}/api/quotes/${encodeURIComponent(id)}/convert`, { method: "POST" });
       const body: unknown = await res.json().catch(() => ({}));
       if (res.status === 201) {
         setOrder(body as Order);

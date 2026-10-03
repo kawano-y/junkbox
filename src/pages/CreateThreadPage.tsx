@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { API_URL } from '../lib/config';
 import { useNavigate, Link } from 'react-router-dom';
 
-const API_BASE_URL = 'https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/threads';
+const API_BASE_URL = `${API_URL}/api/threads`;
 
 export function CreateThreadPage() {
   const [title, setTitle] = useState('');

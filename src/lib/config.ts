@@ -1,1 +1,1 @@
-export const API_URL = 'https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev';
+export const API_URL = import.meta.env.VITE_API_URL;

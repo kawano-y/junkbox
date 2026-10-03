@@ -1,6 +1,5 @@
 import { useEffect, useState, type CSSProperties } from "react";
-
-const API_BASE = "https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev";
+import { API_URL } from "../lib/config";
 
 type Rounding = "floor" | "ceil" | "round";
 type TaxRate = 8 | 10;
@@ -61,7 +60,7 @@ export function QuoteCalculatorPage() {
     const controller = new AbortController();
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch("https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/quotes/calculate", {
+        const res = await fetch(`${API_URL}/api/quotes/calculate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ lines, lineRounding, taxRounding }),
@@ -96,7 +95,7 @@ export function QuoteCalculatorPage() {
     setRegisterError(null);
     setRegisteredId(null);
     try {
-      const res = await fetch(`${API_BASE}/api/quotes`, {
+      const res = await fetch(`${API_URL}/api/quotes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         // 金額は送らない。サーバー側で再計算して保存する

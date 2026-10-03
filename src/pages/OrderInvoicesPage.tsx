@@ -1,4 +1,5 @@
 import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
+import { API_URL } from "../lib/config";
 
 type Invoice = {
   id: string;
@@ -45,7 +46,7 @@ export function OrderInvoicesPage({ initialOrderId }: Props) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/orders/${encodeURIComponent(id)}/invoices`);
+      const res = await fetch(`${API_URL}/api/orders/${encodeURIComponent(id)}/invoices`);
       const body: unknown = await res.json().catch(() => null);
       if (!res.ok) {
         setData(null);
@@ -80,7 +81,7 @@ export function OrderInvoicesPage({ initialOrderId }: Props) {
     if (!orderId || !data) return;
     setError(null);
     try {
-      const res = await fetch(`https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/orders/${encodeURIComponent(orderId)}/invoices`, {
+      const res = await fetch(`${API_URL}/api/orders/${encodeURIComponent(orderId)}/invoices`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: Number(amount) }),

@@ -30,8 +30,8 @@ npx vitest run -t "期限切れは変換できない"     # テスト名で絞�
 
 ## 実行環境・設定
 
-- GitHub Codespaces 前提。フロントの API 接続先 `src/lib/config.ts` の `API_URL` と、サーバーの CORS 許可 `server/src/index.ts` の `FRONTEND_ORIGIN` が Codespaces の URL でハードコードされている。環境が変わったら両方を直す。
-- 環境変数: サーバーは `SESSION_SECRET`, `GOOGLE_CLIENT_ID`, `YOUTUBE_API_KEY`（`server/.env`）。フロントは `VITE_GOOGLE_CLIENT_ID`。
+- GitHub Codespaces 前提。フロントの API 接続先はルートの `.env` の `VITE_API_URL`（`src/lib/config.ts` の `API_URL` 経由で参照し、ページで URL を直書きしない）。サーバーの CORS 許可 `server/src/index.ts` の `FRONTEND_ORIGIN` は Codespaces の URL でハードコードされているので、環境が変わったら直す。
+- 環境変数: サーバーは `SESSION_SECRET`, `GOOGLE_CLIENT_ID`, `YOUTUBE_API_KEY`（`server/.env`）。フロントは `VITE_API_URL`, `VITE_GOOGLE_CLIENT_ID`（ルートの `.env`、`.env.example` 参照）。
 - DB は `node:sqlite` の `DatabaseSync('dev.db')`（`server/` 直下に作られる）。スキーマはマイグレーションではなく、起動時の `initDb()`（`server/src/config/database.ts`）で `CREATE TABLE IF NOT EXISTS` とシードデータ投入（`test-user-001`, `room1`, 見積 `q-1`）を行う。テーブル変更は既存の `dev.db` を削除しないと反映されない。
 - `server/prisma-next.md`, `server/migrations/`, `server/.claude/skills/prisma-composer` などの Prisma Next / PostgreSQL 関連ファイルがあるが、現状のアプリコードは Prisma を使っていない（`prisma` も依存関係に入っていない）。
 - 請求書 PDF は Playwright の Chromium で HTML→PDF 変換する（`server/src/pdf/`）。ブラウザのインストール（`npx playwright install chromium`）が必要。

@@ -66,10 +66,11 @@ YOUTUBE_API_KEY=YouTube Data APIのキー
 フロントエンド（リポジトリ直下の `.env`）:
 
 ```env
+VITE_API_URL=APIサーバーのURL（例: http://localhost:3000）
 VITE_GOOGLE_CLIENT_ID=GoogleのOAuthクライアントID
 ```
 
-API の接続先（`src/lib/config.ts` の `API_URL`）と、サーバーで許可する CORS のオリジン（`server/src/index.ts` の `FRONTEND_ORIGIN`）は Codespaces の URL になっています。別の環境で動かすときはこの2か所を書き換えてください。
+`.env.example` をコピーして使えます。サーバーで許可する CORS のオリジン（`server/src/index.ts` の `FRONTEND_ORIGIN`）は Codespaces の URL がハードコードされているので、別の環境で動かすときはこちらも書き換えてください。
 
 ### 起動
 

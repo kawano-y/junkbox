@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from '../lib/config';
 import { useParams, Link } from 'react-router-dom';
 import '../App.css';
 
@@ -36,7 +37,7 @@ export function ThreadDetailPage() {// スレッド情報のState
     // threadId を使って API 通信を行う
     if (!threadId) return;
 
-    const API_BASE_URL = `https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/threads/${threadId}`;
+    const API_BASE_URL = `${API_URL}/api/threads/${threadId}`;
 
     const fetchData = async () => {
       try {
@@ -78,7 +79,7 @@ export function ThreadDetailPage() {// スレッド情報のState
 
     try {
       // URLに threadId を動的に埋め込み
-      const res = await fetch(`https://orange-parakeet-5rgq5g75pjh499-3000.app.github.dev/api/threads/${threadId}/posts`, {
+      const res = await fetch(`${API_URL}/api/threads/${threadId}/posts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: postName, content }),
