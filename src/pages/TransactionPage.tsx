@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { OrderInvoices } from "./OrderInvoices";
-import { QuoteConvert } from "./Quoteconvert";
-import { QuoteCalculator } from "./QuoteCalculator";
+import { OrderInvoicesPage } from "./OrderInvoicesPage";
+import { QuoteConvertPage } from "./QuoteConvertPage";
+import { QuoteCalculatorPage } from "./QuoteCalculatorPage";
 
 const TABS = [
   { id: "quoteCalculator", label: "見積" },
@@ -32,13 +32,13 @@ export const TransactionPage = () => {
 
       {/* 非表示にするだけ（アンマウントしない）ので入力中の内容が残る */}
       <div role="tabpanel" hidden={activeTab !== "quoteCalculator"}>
-        <QuoteCalculator />
+        <QuoteCalculatorPage />
       </div>
       <div role="tabpanel" hidden={activeTab !== "quoteConvert"}>
-        <QuoteConvert />
+        <QuoteConvertPage />
       </div>
       <div role="tabpanel" hidden={activeTab !== "orderInvoices"}>
-        <OrderInvoices />
+        <OrderInvoicesPage />
       </div>
     </div>
   );

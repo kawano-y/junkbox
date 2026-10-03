@@ -7,9 +7,9 @@ import { CreateThreadPage } from './pages/CreateThreadPage';
 import { ChatPage } from './pages/ChatPage';
 import { LoginPage } from './pages/LoginPage';
 import { InvoicePage } from './pages/InvoicePage';
-import { OrderInvoices } from './pages/OrderInvoices';
-import { QuoteCalculator } from './pages/QuoteCalculator';
-import { QuoteConvert } from './pages/Quoteconvert';
+import { OrderInvoicesPage } from './pages/OrderInvoicesPage';
+import { QuoteCalculatorPage } from './pages/QuoteCalculatorPage';
+import { QuoteConvertPage } from './pages/QuoteConvertPage';
 import { TransactionPage } from './pages/TransactionPage';
 
 export default function App() {
@@ -24,9 +24,9 @@ export default function App() {
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/invoice" element={<InvoicePage />} />
-          <Route path="/orders" element={<OrderInvoices />} />
-          <Route path="/quotes" element={<QuoteCalculator />} />
-          <Route path="/quotesconvert" element={<QuoteConvert />} />
+          <Route path="/orders" element={<OrderInvoicesPage />} />
+          <Route path="/quotes" element={<QuoteCalculatorPage />} />
+          <Route path="/quotesconvert" element={<QuoteConvertPage />} />
           <Route path="/transactions" element={<TransactionPage />} />
 
         </Routes>

@@ -42,7 +42,7 @@ const errorMessage = (body: ErrorBody, status: number): string =>
     ? body.error
     : body.error?.message ?? body.message ?? `エラー (${status})`;
 
-export function QuoteCalculator() {
+export function QuoteCalculatorPage() {
   const [lines, setLines] = useState<QuoteLineInput[]>([
     { name: "開発作業", quantity: 3, unitPrice: 33333, taxRate: 10 },
     { name: "書籍", quantity: 2, unitPrice: 1234, taxRate: 8 },

@@ -33,7 +33,7 @@ type Props = {
   initialOrderId?: string;
 };
 
-export function OrderInvoices({ initialOrderId }: Props) {
+export function OrderInvoicesPage({ initialOrderId }: Props) {
   const [orderIdInput, setOrderIdInput] = useState(initialOrderId ?? "");
   const [orderId, setOrderId] = useState<string | null>(null);
   const [data, setData] = useState<InvoiceList | null>(null);

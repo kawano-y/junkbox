@@ -22,7 +22,7 @@ type Props = {
 
 const yen = (n: number) => `¥${Number(n).toLocaleString("ja-JP")}`;
 
-export function QuoteConvert({ onOpenInvoices }: Props) {
+export function QuoteConvertPage({ onOpenInvoices }: Props) {
   const [quoteId, setQuoteId] = useState("");
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<string | null>(null);
